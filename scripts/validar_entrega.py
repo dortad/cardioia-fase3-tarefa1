@@ -1,24 +1,22 @@
-"""Valida os artefatos documentais e o notebook exigidos pela entrega."""
+"""Valida os artefatos documentais exigidos pela entrega da Fase 3."""
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-IGNORAR = {".git", ".venv", "Apostilas", "docs", "fase2", "logs", "tmp", "__pycache__"}
+# Acervos de fases anteriores ficam congelados como foram entregues e não são verificados.
+IGNORAR = {".git", ".venv", "_interno", "Apostilas", "logs", "tmp", "__pycache__"}
+IGNORAR_CAMINHOS = (Path("document/other"),)
 OBRIGATORIOS = (
     "README.md",
     "document/Enunciado.md",
     "document/image.png",
     "document/image-1.png",
     "document/ai_project_document_fiap.md",
-    "src/parte1/sintomas_pacientes.txt",
-    "src/parte1/mapa_sintomas_doencas.csv",
-    "src/parte1/diagnostico_sintomas.py",
-    "src/parte2/frases_risco.csv",
-    "src/parte2/classificador_risco.ipynb",
+    "src/parte1_edge/README.md",
+    "src/parte2_cloud/README.md",
 )
 LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)|!\[[^\]]*\]\(([^)]+)\)")
 
@@ -29,27 +27,18 @@ def validar_arquivos() -> None:
         raise AssertionError("Arquivos obrigatórios ausentes: " + ", ".join(ausentes))
 
 
-def validar_notebook() -> None:
-    caminho = ROOT / "src/parte2/classificador_risco.ipynb"
-    notebook = json.loads(caminho.read_text(encoding="utf-8"))
-    codigo = [celula for celula in notebook.get("cells", []) if celula.get("cell_type") == "code"]
-    if not codigo:
-        raise AssertionError("O notebook não contém células de código.")
-    pendentes = [i for i, celula in enumerate(codigo, 1) if celula.get("execution_count") is None]
-    erros = [
-        i
-        for i, celula in enumerate(codigo, 1)
-        if any(saida.get("output_type") == "error" for saida in celula.get("outputs", []))
-    ]
-    if pendentes or erros:
-        raise AssertionError(f"Notebook inválido: células pendentes={pendentes}; erros={erros}")
+def ignorado(relativo: Path) -> bool:
+    if any(parte in IGNORAR for parte in relativo.parts):
+        return True
+    return any(relativo.is_relative_to(caminho) for caminho in IGNORAR_CAMINHOS)
 
 
 def validar_links() -> int:
     ausentes: list[str] = []
     verificados = 0
     for markdown in ROOT.rglob("*.md"):
-        if any(parte in IGNORAR for parte in markdown.relative_to(ROOT).parts):
+        relativo = markdown.relative_to(ROOT)
+        if ignorado(relativo):
             continue
         texto = markdown.read_text(encoding="utf-8")
         for correspondencia in LINK.finditer(texto):
@@ -60,7 +49,7 @@ def validar_links() -> int:
             verificados += 1
             if not (markdown.parent / alvo).resolve().exists():
                 linha = texto.count("\n", 0, correspondencia.start()) + 1
-                ausentes.append(f"{markdown.relative_to(ROOT)}:{linha} -> {alvo}")
+                ausentes.append(f"{relativo}:{linha} -> {alvo}")
     if ausentes:
         raise AssertionError("Links locais ausentes:\n" + "\n".join(ausentes))
     return verificados
@@ -68,7 +57,6 @@ def validar_links() -> int:
 
 def main() -> None:
     validar_arquivos()
-    validar_notebook()
     total_links = validar_links()
     print(f"Entrega estrutural válida; {total_links} links locais conferidos.")
 

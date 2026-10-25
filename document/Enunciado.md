@@ -1,184 +1,126 @@
-Atividade em grupo
-
-Cap 1 - Desafio Integrador: IA entre Robôs, Sinapses e Medicina
-
-de 03/09/2026 a 07/10/2026
-
-Entrega pendente
-
-Atividades entregues até 3 dias após o prazo receberão até 70% da nota.
-
-O cálculo é feito automaticamente pelo sistema, o professor não tem controle sobre o percentual da nota atribuída.
-
 Introdução
-ATIVIDADE – FASE 2: Diagnóstico Automatizado – IA no Estetoscópio Digital
-
-Atenção Atividade Avaliativa:         
-
-- Verifique se o arquivo do upload está correto, não é possível enviar um outro arquivo após fechamento da entrega na plataforma ou correção do professor.         
-
-- Não deixe para realizar a entrega da atividade nos últimos minutos do prazo, você pode ter algum problema e perder a entrega. As entregas são realizadas apenas pela plataforma.          
-
-- Não disponibilize a resposta da sua atividade em grupos de WhatsApp, Discord, Microsoft Teams, pois pode gerar plágio e zerar a atividade para todos.         
-
-- Você tem um período máximo de 15 dias após a publicação da nota para solicitar a revisão da correção.      
-
-Enunciado de atividade:
-
-Nesta fase, o projeto CardioIA irá desafiá-lo um pouco mais: você deverá simular a automatização do diagnóstico com IA — prática amplamente utilizada em centros de diagnóstico modernos, onde algoritmos se tornam os estetoscópios digitais do século XXI.
-
-Como equipe, seu objetivo será desenvolver um módulo inteligente capaz de analisar dados clínicos e relatórios médicos, reconhecer sintomas e propor diagnósticos assistidos por IA. Você vai trabalhar com NLP, classificação de texto e análise de vieses a partir do dataset (visto na Fase 1), enfrentando os dilemas reais da Inteligência Artificial aplicada à saúde.
-
-No mapa mental a seguir, você poderá ver em que ponto da sua jornada no PBL (Problem Project Learning) sua equipe se encontra. Observe o que está escrito na Fase 2, mas procure também compreender o contexto geral, preparando-se para as próximas fases.
+ATIVIDADE – FASE 3: Monitoramento Contínuo – IoT na Saúde
 
 
-Para visualizar o mapa mental completo
+
+Enunciado da atividade:
+
+Nesta fase, você e sua equipe irão avançar no projeto CardioIA, integrando conceitos de IoT, computação em nuvem, Edge/Fog Computing e visualização de dados. O desafio é simular um sistema de monitoramento contínuo que capture sinais vitais de pacientes cardiológicos, armazene e processe informações localmente, transmita os dados para a nuvem e exiba resultados em dashboards interativos.
+
+Você irá trabalhar com ESP32 no Wokwi, protocolos de comunicação (MQTT), armazenamento local (SPIFFS) e dashboards (Node-RED/Grafana). Essa combinação permitirá compreender o fluxo completo de dados em IoT aplicado à saúde: captura → processamento → transmissão → visualização → alerta.
+
+Para situar melhor a jornada, observe no mapa mental em que ponto o projeto CardioIA se encontra nesta fase. É importante destacar que o material teórico que dará suporte a este projeto está concentrado nas fases 2 e 3, consideradas mais adequadas para você neste momento. A visualização contribui para a compreensão de como as etapas já realizadas se conectam com as próximas fases.
+
 ![alt text](image.png)
+
+
+
+Para visualizar o mapa mental completo, acesso o link: mapaMental - CardioIA_ A Nova Era da Cardiologia Inteligente.svg
+
+ 
 
 Objetivo geral dessa atividade:
 
-Você irá aplicar os conteúdos de algumas disciplinas desta fase para desenvolver soluções práticas de diagnóstico automatizado. A ideia aqui é mostrar como um código “simples” aliado com dados bem-organizados, pode gerar soluções básicas que se aproximam do funcionamento de sistemas reais utilizados em hospitais e centros de tratamentos.
+O objetivo é desenvolver um protótipo funcional que simule um sistema vestível de monitoramento cardíaco, capaz de:
 
-Isso inclui interpretar pequenos textos médicos, identificar sintomas e relacioná-los a doenças, utilizando estruturas simples. Também faz parte da tarefa, o treinamento de um modelo de IA capaz de prever o risco de um paciente com base em frases curtas. E o melhor: todo processo será feito por você e seu grupo, utilizando sua capacidade intelectual e criatividade.
+Capturar sinais vitais simulados (exemplo: batimentos cardíacos, temperatura, umidade e movimento).
+Armazenar localmente e garantir resiliência offline (Edge Computing).
+Transmitir dados para a nuvem via MQTT.
+Visualizar informações em dashboards com alertas automáticos.
+Refletir sobre eficiência, segurança e boas práticas em IoT médico.
+Observação: o aluno não é obrigado a comprar nenhum hardware ou sensores para realizar esta atividade. O uso de dispositivos físicos é opcional, no entanto recomendamos que você tenha todo o material necessário por perto para uma melhor formação profissional. Caso deseje utilizar equipamentos da FIAP em suas atividades, favor entrar em contato com a tutoria para realizar o agendamento. As unidades FIAP mais próxima de você estão preparadas com ambientes de laboratório maker para sua experiência ser ainda maior.
 
-Ao final dessa fase, você poderá ter construído algo que muitos profissionais que atuam hoje no mercado da área de saúde adorariam ter em mãos. Durante esse processo, você também será estimulado a refletir sobre a qualidade e a justiça dos dados, dando seus primeiros passos como um desenvolvedor de IA responsável, isto é, se preocupando com o tema “governança em dados”.
+Ao final desta fase, sua equipe terá desenvolvido uma solução prática que demonstra de forma técnica como as tecnologias de IoT podem ser aplicadas no monitoramento de saúde, priorizando eficiência, segurança e responsabilidade no uso dos dados. E essa solução é 100% aplicável em projetos reais de mercado.
 
-![alt text](image-1.png)
+ 
 
 Atividade detalhada:
 
-Parte 1 – Frases de sintomas + extração de informações:
+PARTE 1 – Armazenamento e processamento local (Edge Computing):
 
-Criar um arquivo .txt com 10 frases completas que simulem pequenas descrições de sintomas relatados por pacientes. As frases devem conter informações como o que o paciente sente, quando começou e como os sintomas afetam sua rotina (por exemplo: “Há dois dias estou com uma dor no peito que piora quando faço esforço físico”, “Sinto cansaço constante há uma semana, mesmo depois de descansar”).
-Criar uma estrutura simples de associação entre sintomas e doenças usando uma planilha ou um arquivo *.csv. A ideia é montar um mapa de conhecimento que relacione palavras ou expressões comuns (sintomas relatados pelos pacientes) com possíveis diagnósticos. Por exemplo:
-"dor no peito", "aperto no tórax" → Infarto.
-"cansaço constante", "fadiga" → Insuficiência Cardíaca.
-"falta de ar", "dificuldade para respirar" → Angina.
-Use uma estrutura de colunas como:
-Sintoma 1 | Sintoma 2 | Doença Associada.
-Essa atividade pode ajudar a entender como sistemas inteligentes estruturam informações para auxiliar em diagnósticos médicos.
-Quanto mais linhas o seu arquivo .csv tiver, melhor será o seu processo de decisão e classificação de doenças.
-Utilize um código Python para ler as frases do arquivo .txt, identificar os sintomas com base nessas expressões e sugerir um possível diagnóstico com base no mapa de conhecimento. As 10 frases representam uma estrutura inicial e funcional para 10 diagnósticos simples de pacientes diversos, desde que as frases sejam exemplos variados e bem elaborados. Essa quantidade de frases é suficiente para testar a extração de sintomas com base no mapa de conhecimento e para simular o funcionamento de um sistema básico de apoio ao diagnóstico. Lembre-se de que quanto mais claras e diversificadas forem as frases, melhor será o desempenho da lógica de identificação e sugestão de diagnóstico.
+Desenvolver no Wokwi uma aplicação com ESP32, onde:
+
+Seu projeto tenha no mínimo 2 sensores distintos.
+Um sensor obrigatório de temperatura, responsável por ler periodicamente dados do sensor DHT22 (como o DHT22, que mede tanto temperatura quanto umidade — por isso, vamos considerar o DHT22 como sendo 1 sensor). O segundo sensor é de livre escolha do grupo para desenvolver a sua aplicação.
+[opcional] Armazene cada leitura localmente no sistema de arquivos SPIFFS. Aqui vale uma reflexão: esse item (SPIFFS) só funciona em um ESP32 físico e real, enquanto que, seja no simulador Wokwi Web, seja no VSCode com as extensões Wokwi e Platformio, o SPIFFS é volátil. Isso significa que ele é perdido quando se encerra a simulação, e não será possível gravar nenhum arquivo csv no ESP32 através de simuladores. Apenas em chips reais. Uma alternativa para esse caso é usar um shield chamado Cartão microSD, que também funciona apenas em chips reais. No exemplo desse vídeo https://www.youtube.com/watch?v=sYWjhoVdDF8, mostra-se o shield microSD com um Arduino Uno, que é o mesmo que usar ESP32.
+Simule conectividade Wi-Fi (variável booleana). Quando “conectado”, envie os dados armazenados para a nuvem via Serial.println e apague o arquivo local.
+Garanta resiliência offline: mesmo sem conexão, o sistema continua coletando dados e quando voltar a ficar online, os dados não enviados sejam sincronizados. Escolha uma estratégia de armazenamento limitado nesse processo de resiliência alinhado com o modelo de negócio do seu projeto, isto é, quantas milhares de amostra você pretende registrar no seu ESP32 até ficar online novamente.
+Essa etapa demonstra o papel do Edge Computing em aplicações críticas de saúde. Pela limitação dos simuladores em executar o recurso SPIFFS, considere o Monitor Serial como sendo uma opção de resiliência offline alternativa.
  
 
 Entregáveis:
 
-Arquivo .txt com 10 frases completas simulando descrições de sintomas relatados por pacientes.
-Planilha ou arquivo .csv com o mapa de conhecimento (associação entre sintomas e possíveis diagnósticos).
-Código Python (.ipynb ou .py) que faz a leitura do arquivo de frases, identifica os sintomas e sugere diagnósticos com base na ontologia.
+Link do projeto no Wokwi.
+Código em C++ comentado.
+Relatório simples (mínimo de uma página) descrevendo o fluxo de funcionamento e a lógica de resiliência.
  
 
-Parte 2 – Classificador básico de texto:
+PARTE 2 – Transmissão para nuvem e visualização (Fog/Cloud Computing):
 
-Aqui, você irá desenvolver um classificador básico de texto que analisa frases com sintomas e classifica o nível de risco como “baixo risco” ou “alto risco”. Essa tarefa simula o funcionamento de sistemas automatizados utilizados na triagem clínica, que ajudam a priorizar atendimentos com base na gravidade relatada.
+Criar um sistema completo de monitoramento que:
 
-Montar uma pequena base simulada no formato .csv, contendo frases médicas já rotuladas com o nível de risco. Exemplo: frase,situacao.
-"sinto dor no peito e falta de ar",alto risco
-"tive um leve incômodo nas costas",baixo risco
-Aplicar o método TF-IDF para transformar essas frases em vetores numéricos que possam ser entendidos pelo algoritmo de Machine Learning.
-Escolher um modelo de classificação simples (como Decision Tree, Logistic Regression ou outro do Scikit-learn) para treinar seu sistema e testá-lo com os dados.
-Avaliar o desempenho do modelo com base na acurácia e em como ele se comporta diante de frases de risco diferente, observando eventuais padrões ou distorções que possam surgir nos resultados. Esta etapa do projeto marca um ponto-chave da sua jornada: você estará reproduzindo, com ferramentas acessíveis, a lógica por trás de sistemas reais utilizados em triagens clínicas.
- 
-
+Envie dados simulados do ESP32 para a nuvem via protocolo MQTT (exemplo de broker: HiveMQ Cloud).
+Monte uma dashboard no Node-RED para exibir em tempo real:
+Gráfico de um sinal vital escolhido pelo grupo (temperatura + outro sensor simule batimentos cardíacos, como um botão de pressão, que você aperta x vezes por minuto).
+Medidor (gauge) de outro parâmetro relevante (exemplo: temperatura ou sensor alternativo).
+Indicador visual de alerta (LED virtual ou texto) quando valores ultrapassarem limites definidos pelo grupo (exemplo: > 120 bpm, temperatura > 38 °C ou outro parâmetro relevante).
+Opcionalmente, integrar com Grafana Cloud para visualização avançada.
+Essa etapa integra conceitos de Fog e Cloud Computing com visualização em saúde digital.
 Entregáveis:
 
-Arquivo .csv com frases e rótulos.
-Código .ipynb com TF-IDF, classificação e avaliação do modelo.
-Repositório público no GitHub contendo todos os arquivos do projeto da Fase 2.
-Um vídeo de até 4 minutos demonstrando o funcionamento completo da solução (pode ser com gravação de tela e explicação por voz ou legenda). O vídeo deve ser postado no YouTube como "não listado" e o link deve ser incluído no README do repositório no GitHub.
-Critérios de Avaliação (10 pontos totais):
+Código do ESP32 (Arduino IDE/Wokwi).
+Prints evidenciando a aplicação ou export do dashboard no Node-RED (e Grafana, se utilizado).
+Relatório (mínino de duas páginas) sobre o fluxo de comunicação MQTT e configuração do dashboard.
+ 
 
-Critério
+Critérios de avaliação (10 pontos totais):
 
-Pontos
-
-Relatos e mapa de conhecimento organizados  = 2
-
-Código de extração de informações funcional = 2
-
-Dataset simples criado corretamente = 1
-
-Classificador treinado e testado corretamente = 2
-
-Documentação clara e repositório público no GitHub com README completo = 1
-
-Vídeo de demonstração no YouTube (não listado) com link incluído no GitHub = 2
-
-Ir Além 1 – Criando a interface do CardioIA:
-
-Nesta atividade, você será responsável por construir apenas a interface do CardioIA. A proposta é criar um pequeno portal responsivo em React + Vite, que simule a visualização de dados de pacientes, agendamentos e um painel com métricas simples. Os dados utilizados devem ser simulados (via arquivos JSON locais ou API pública de exemplo), e nenhuma integração real com back-end será necessária. O foco é aplicar os conceitos aprendidos em Front-End, com destaque para Hooks avançados e Context API.
-
-Você e seu grupo deverão criar uma aplicação em React com Vite que contenha:
-
-Autenticação simulada via Context API (com JWT fake no localStorage);
-Listagem de pacientes utilizando API fake (como JSONPlaceholder) ou base simulada;
-Formulário de agendamento de consultas com uso de useState e useReducer;
-Dashboard simples com contagem de pacientes e consultas agendadas;
-Proteção de rotas com AuthContext (só mostrar dados se o usuário estiver logado);
-Estilização com CSS Modules ou Styled Components.
-Objetivo:
-
-Construir uma aplicação front-end interativa que simule, de forma visual, a rotina de um portal de diagnóstico em cardiologia, utilizando React e seguindo boas práticas de componentização, navegação, autenticação simulada e manipulação de estado.
+![alt text](image-1.png)
 
  
 
-Entregáveis:
-
-Repositório público no GitHub com o nome: nome-do-grupo-cardioia-portal.
-Código-fonte completo com as pastas:
-/contexts, /components, /services, /pages.
-README.md com instruções de instalação e execução.
-Lista com nome completo e RM dos integrantes.
-Um vídeo de até 4 minutos demonstrando o funcionamento completo da solução (pode ser com gravação de tela e explicação por voz ou legenda). O vídeo deve ser postado no YouTube como "não listado" e o link deve ser incluído no README do repositório no GitHub.
- 
-
-Critérios de Avaliação:
-
-Autenticação funcional e proteção de rotas.
-Consumo de API e controle de estado.
-Uso correto de Hooks (useState, useEffect, useContext).
-Componentização e organização do projeto.
-Estilização responsiva e usabilidade.
- 
-
-Ir Além 2 – Diagnóstico visual em cardiologia com rede neural:
-
-Nesta atividade, você irá aplicar uma Rede Neural Artificial (MLP) para classificar imagens médicas relacionadas a diagnósticos cardiológicos. A proposta é utilizar uma base de dados pública com imagens de eletrocardiogramas (ECG) e treinar um modelo para identificar se o sinal indica um ritmo cardíaco normal ou alguma anomalia.
-
-Essa atividade amplia os conceitos do CardioIA para o campo do diagnóstico visual, reforçando a importância da IA na triagem automatizada de pacientes e no apoio à decisão médica.
-
- 
+IR ALÉM 1 – Comunicação automatizada com REST e e-mail
 
 Objetivo:
 
-Utilizar um dataset público de imagens de ECG com classificação binária (normal vs. anormal).
-Pré-processar as imagens e convertê-las para um formato compatível com redes neurais simples (por exemplo: redimensionar e converter para tons de cinza).
-Criar uma rede neural do tipo MLP (Perceptron Multicamadas) usando Keras.
-Treinar e testar o modelo com base nos dados.
-Avaliar a acurácia do classificador.
-Recomendação de Dataset:
-
-<https://www.kaggle.com/datasets/shayanfazeli/heartbeat>.
-
- 
+Simular um sistema de monitoramento que consuma e envie dados de sinais vitais via uma API REST em Python, incorporando lógica de detecção de riscos (exemplo: taquicardia, febre, ausência de movimento) e acionando uma automação de envio de e-mail em caso de alerta. O exercício conecta protocolos HTTP, bibliotecas Python e conceitos de RPA aplicados à saúde digital.
 
 Entregáveis:
 
-Notebook (.ipynb) com todo o código comentado e funcional.
-Repositório público no GitHub contendo o notebook, exemplos de imagens e um README explicativo.
-Um vídeo de até 4 minutos demonstrando o funcionamento do projeto, explicando o código, os dados e os resultados. O vídeo deve ser postado no YouTube como "não listado" e o link incluído no README do Git.
+Código em Python implementando cliente REST para envio e recebimento de dados.
+Implementação da lógica de verificação de risco.
+Simulação de disparo de e-mail automatizado em caso de alerta.
+Relatório curto (de uma a duas páginas) descrevendo o fluxo implementado.
+Critérios de avaliação:
+
+Implementação correta do consumo de API REST.
+Lógica de verificação de riscos bem definida.
+Automação do envio de e-mail funcional.
+Clareza do código e documentação.
+Organização da entrega (manter o código limpo, documentação clara e estrutura de arquivos bem definida).
  
 
-Critérios de Avaliação:
+IR ALÉM 2 – Inteligência Artificial em séries temporais de saúde
 
-Pré-processamento correto das imagens.
-Implementação funcional da rede MLP com Keras.
-Treinamento e avaliação com resultados apresentados.
-Organização e clareza do código no notebook.
+Objetivo:
+
+Aplicar técnicas de IA para análise de séries temporais de sinais vitais (exemplo: batimentos cardíacos). Comparar um classificador tradicional (exemplo: regressão logística) com uma rede neuromórfica simples (modelo LIF ou FHN), explorando vantagens e limitações.
+
+Entregáveis:
+
+Notebook Python comentado.
+Repositório GitHub público com código e README.
+Relatório comparativo (duas páginas) sobre o desempenho dos modelos.
+Vídeo de até 4 minutos apresentando resultados, postado no YouTube como "não listado" e linkado no README.
+Critérios de avaliação:
+
+Implementação funcional dos modelos.
+Comparação clara entre métodos.
+Clareza e organização do notebook.
+Qualidade do relatório comparativo.
+Demonstração em vídeo com análise crítica.
  
 
 Mensagem final:
 
-Treinar e interpretar um modelo de IA para prever riscos é uma tarefa que, embora simples na superfície, exige olhar analítico e responsabilidade. Ao dominar essa etapa, você desenvolve habilidades cada vez mais valorizadas no mercado — habilidades que poucos dominam com uma visão crítica e aplicada. Siga em frente nesta jornada com autonomia e criatividade. É assim que grandes cientistas surgem.
-
- 
+Integrar Edge, Fog e Cloud Computing em aplicações médicas é um dos maiores desafios atuais da IoT. Nesta fase, você terá vivenciado o ciclo completo de captura, processamento, transmissão e visualização de dados em saúde digital. Ao avançar para os desafios “Ir Além”, você expande ainda mais seu repertório, conectando IoT a Front-End e Inteligência Artificial aplicada.
