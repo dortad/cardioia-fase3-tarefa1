@@ -62,7 +62,7 @@ A organização segue o [template de repositório da FIAP](https://github.com/ag
 ├── src/
 │   ├── parte1_edge/          ESP32 no Wokwi: sensores e resiliência offline
 │   └── parte2_cloud/         MQTT e dashboard no Node-RED
-├── requirements.txt          dependências Python (somente se necessárias)
+├── requirements.txt          dependências Python acumuladas das fases 1 a 3
 └── README.md                 apresentação e instruções da entrega
 ```
 
@@ -70,7 +70,15 @@ A organização segue o [template de repositório da FIAP](https://github.com/ag
 
 As instruções de execução no Wokwi e no Node-RED serão adicionadas com a implementação de cada parte.
 
-A estrutura documental pode ser conferida com Python 3.12:
+As Partes 1 e 2 não exigem dependências Python. Para usar os códigos Python das fases anteriores, crie o ambiente com Python 3.12 e instale a lista acumulada:
+
+```powershell
+py -3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+A estrutura documental pode ser conferida com Python 3.12, sem instalar dependências:
 
 ```powershell
 python scripts/validar_entrega.py
