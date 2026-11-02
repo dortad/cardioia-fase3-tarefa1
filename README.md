@@ -45,6 +45,7 @@ Os dados são simulados e o protótipo não foi validado para uso clínico.
 - [Projeto da Parte 1 no Wokwi](https://wokwi.com/projects/478992650362063873)
 - [Relatório da Parte 1](document/relatorio_parte1.md)
 - [Parte 2 — transmissão MQTT e dashboard](src/parte2_cloud/README.md)
+- [Projeto da Parte 2 no Wokwi](https://wokwi.com/projects/479534021698400257), sem as credenciais do broker
 - [Relatório da Parte 2](document/relatorio_parte2.md)
 - [Documento do projeto no formato FIAP](document/ai_project_document_fiap.md)
 - [Enunciado da atividade](document/Enunciado.md)

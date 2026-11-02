@@ -4,7 +4,9 @@
 **Grupo AI4Success — Turma 2TIAOR**
 Durval de Oliveira Dorta Junior (RM 567007) e Guilherme da Nobrega Gontijo (RM 562211)
 
-**Código:** [src/parte2_cloud/](../src/parte2_cloud/)
+**Projeto no Wokwi:** [CardioIA - Fase 3 - Parte 2](https://wokwi.com/projects/479534021698400257) | **Código:** [src/parte2_cloud/](../src/parte2_cloud/)
+
+O usuário e a senha do broker foram removidos desse projeto; sem eles, a coleta e o buffer funcionam, mas o MQTT não conecta. Os resultados deste relatório foram obtidos com as credenciais preenchidas, e os prints registram essa execução.
 
 Os dados deste trabalho são simulados, e o protótipo não foi validado para uso clínico.
 
@@ -42,7 +44,7 @@ O enunciado cita o HiveMQ Cloud como exemplo, e o Cap08 (p. 24) usa uma versão 
 | Qualidade de serviço (QoS) | 0 |
 | Formato | JSON |
 
-O ESP32 usa as bibliotecas `WiFi`, `WiFiClientSecure` e `PubSubClient`, as mesmas do exemplo do Cap08. No Wokwi, ele se conecta à rede virtual `Wokwi-GUEST`. As credenciais ficam fora do repositório: o `sketch.ino` publicado traz campos a preencher.
+O ESP32 usa as bibliotecas `WiFi`, `WiFiClientSecure` e `PubSubClient`, as mesmas do exemplo do Cap08. No Wokwi, ele se conecta à rede virtual `Wokwi-GUEST`. As credenciais ficam fora do repositório e do projeto publicado no Wokwi: nos dois, o `sketch.ino` traz campos a preencher.
 
 ### 3.3 Publicação
 
