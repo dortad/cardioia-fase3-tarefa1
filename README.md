@@ -37,12 +37,15 @@ A Fase 3 dá continuidade às entregas anteriores. A [Fase 1](document/other/fas
 
 Os dados são simulados e o protótipo não foi validado para uso clínico.
 
-**Estado atual:** estrutura do projeto preparada. A [Parte 1 — Edge Computing](src/parte1_edge/README.md) e a [Parte 2 — Fog/Cloud Computing](src/parte2_cloud/README.md) estão em desenvolvimento. Os itens “Ir Além” serão avaliados após a conclusão das duas partes.
+**Estado atual:** a [Parte 1 — Edge Computing](src/parte1_edge/README.md) e a [Parte 2 — Fog/Cloud Computing](src/parte2_cloud/README.md) foram concluídas. Os itens opcionais “Ir Além” não fazem parte desta entrega.
 
 ## 🔗 Links rápidos
 
 - [Parte 1 — armazenamento e processamento local](src/parte1_edge/README.md)
+- [Projeto da Parte 1 no Wokwi](https://wokwi.com/projects/478992650362063873)
+- [Relatório da Parte 1](document/relatorio_parte1.md)
 - [Parte 2 — transmissão MQTT e dashboard](src/parte2_cloud/README.md)
+- [Relatório da Parte 2](document/relatorio_parte2.md)
 - [Documento do projeto no formato FIAP](document/ai_project_document_fiap.md)
 - [Enunciado da atividade](document/Enunciado.md)
 - [Repositório da Fase 2](https://github.com/dortad/cardioia-fase2-tarefa1)
@@ -68,7 +71,7 @@ A organização segue o [template de repositório da FIAP](https://github.com/ag
 
 ## 🔧 Como executar o código
 
-As instruções de execução no Wokwi e no Node-RED serão adicionadas com a implementação de cada parte.
+As instruções de execução estão nos READMEs da [Parte 1](src/parte1_edge/README.md) e da [Parte 2](src/parte2_cloud/README.md).
 
 As Partes 1 e 2 não exigem dependências Python. Para usar os códigos Python das fases anteriores, crie o ambiente com Python 3.12 e instale a lista acumulada:
 
@@ -88,6 +91,10 @@ Essa verificação é executada automaticamente pelo [GitHub Actions](.github/wo
 
 ## 🗃 Histórico de lançamentos
 
+- **1.0.0 — 01/11/2026**
+  - Parte 1 no Wokwi, com filtro de artefatos, buffer circular e sincronização.
+  - Parte 2 com MQTT no HiveMQ Cloud e dashboard no Node-RED.
+  - Relatórios das duas partes e prints do dashboard.
 - **0.1.0 — 25/10/2026**
   - Estrutura inicial da Fase 3 a partir da entrega da Fase 2, preservada em `document/other/fase2/`.
 
