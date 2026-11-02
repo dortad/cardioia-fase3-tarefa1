@@ -1,91 +1,93 @@
 # Relatório da Parte 1 — Armazenamento e processamento local (Edge Computing)
 
-**CardioIA — Fase 3: Monitoramento Contínuo – IoT na Saúde**
-**Grupo AI4Success — Turma 2TIAOR**
+CardioIA — Fase 3: Monitoramento Contínuo – IoT na Saúde
+Grupo AI4Success — Turma 2TIAOR
 Durval de Oliveira Dorta Junior (RM 567007) e Guilherme da Nobrega Gontijo (RM 562211)
 
-**Projeto no Wokwi:** [CardioIA - Fase 3](https://wokwi.com/projects/478992650362063873) | **Código:** [src/parte1_edge/](../src/parte1_edge/)
+Projeto no Wokwi: [CardioIA - Fase 3](https://wokwi.com/projects/478992650362063873)
+Código: [src/parte1_edge/](../src/parte1_edge/)
 
-Os dados deste trabalho são simulados, e o protótipo não foi validado para uso clínico.
+Todos os dados deste trabalho são simulados. O protótipo não foi validado para uso clínico.
 
-## 1. Objetivo
+## 1. O que fizemos
 
-Esta parte simula o dispositivo vestível do CardioIA em um ESP32 no Wokwi. O dispositivo lê sinais vitais simulados, trata os dados no próprio equipamento e continua coletando sem conexão. Quando a conexão volta, ele envia o que ficou guardado.
+Nesta parte, montamos no Wokwi um ESP32 que faz o papel de um monitor cardíaco vestível. Ele lê temperatura, umidade e batimentos, trata esses dados no próprio dispositivo e continua coletando mesmo sem internet. Quando a conexão volta, envia o que ficou guardado.
 
-Essa escolha segue o papel da borda descrito no Cap09: dispositivos que operam de forma autônoma mesmo sem rede externa, com alta resiliência a falhas de conexão, mas com armazenamento restrito, usado principalmente para logs e dados temporários. O limite de memória é, portanto, uma decisão central do projeto.
+A ideia veio do Cap09, que descreve a borda (Edge) como a camada que continua funcionando sozinha quando a rede cai, mas com pouco espaço de armazenamento, usado basicamente para dados temporários. Por isso, o tamanho da memória acabou sendo a decisão mais importante desta parte.
 
-## 2. Componentes
+## 2. Circuito
 
-| Componente | Função | Ligação ao ESP32 |
+Usamos três componentes ligados ao ESP32:
+
+| Componente | Para que serve | Pino |
 |---|---|---|
-| DHT22 | Temperatura e umidade | SDA em D15 |
-| Botão | Simula os batimentos: cada toque é uma batida | D4 |
-| Chave deslizante | Simula o Wi-Fi, com a variável booleana `wifiConectado` | D18 |
+| DHT22 | Temperatura e umidade | D15 |
+| Botão | Simula os batimentos (cada toque é uma batida) | D4 |
+| Chave deslizante | Simula o Wi-Fi ligado ou desligado | D18 |
 
-O DHT22 é o sensor obrigatório, e o botão é o segundo sensor, de livre escolha, conforme a sugestão do enunciado.
+O DHT22 é o sensor obrigatório. Para o segundo sensor, seguimos a sugestão do próprio enunciado e usamos um botão apertado algumas vezes por minuto.
 
-## 3. Fluxo de funcionamento
+## 3. Como o programa funciona
 
-O `loop()` não usa `delay()`, para que o botão seja verificado o tempo todo. Em cada volta, ele executa quatro tarefas:
+Não usamos `delay()` no `loop()`, porque o programa ficaria parado e perderia os toques no botão. Em vez disso, cada volta do `loop()` faz quatro coisas rápidas: lê a chave do Wi-Fi, verifica se houve um toque no botão, faz a leitura do DHT22 quando já passaram 5 segundos e, se estiver online, envia uma leitura guardada.
 
-1. **Conexão:** lê a chave. O novo estado só é aceito depois de 50 ms estável, para eliminar a trepidação do contato.
-2. **Batimentos:** cada toque válido gera um intervalo em relação ao batimento anterior, e o BPM é calculado por `60000 / intervalo`.
-3. **Leitura periódica:** a cada 5 s, lê o DHT22 e grava no buffer uma leitura com momento, temperatura, umidade e BPM.
-4. **Sincronização:** com a conexão ativa e havendo leituras pendentes, envia uma leitura e libera sua posição.
+O BPM é calculado pelo tempo entre dois toques: `60000 / intervalo`, já que um minuto tem 60.000 ms. Com toques a cada 1 segundo, por exemplo, o resultado é 60 BPM.
 
-## 4. Processamento local
+## 4. Tratamento dos dados no dispositivo
 
-Dois tratamentos ocorrem antes de o dado seguir adiante:
+O botão já tinha um debounce de 50 ms para ignorar a trepidação do contato. Mesmo assim, quando testamos clicando o mais rápido possível, chegamos a ver 363 BPM, um valor que não representa um batimento real. Para resolver, criamos um filtro: intervalos menores que 273 ms, que dariam mais de 220 BPM, são ignorados como artefato. O valor de 220 foi um limite que definimos para esta simulação, não um critério clínico.
 
-- **Filtro de artefato:** intervalos menores que 273 ms, equivalentes a mais de 220 BPM, são ignorados. Esse limite foi definido para esta simulação e não é um critério clínico. Um toque ignorado não atualiza o último batimento. Assim, o intervalo seguinte é medido a partir do último batimento aceito, e um ruído não invalida a batida verdadeira que vem depois dele.
-- **Leituras inválidas:** quando o DHT22 devolve `NaN`, a leitura é descartada antes da gravação e não chega à nuvem.
+Um ponto que precisou de uma conta para ficar claro: quando um toque é ignorado, ele não pode virar a referência para o próximo intervalo. Imagine um batimento em 0 ms, um ruído em 250 ms e outro batimento em 504 ms. Se o ruído virasse a referência, o intervalo seguinte seria de 254 ms, e a batida verdadeira também seria descartada. Por isso, o próximo intervalo é sempre medido a partir do último batimento aceito.
 
-O filtro é diferente do alerta previsto para a Parte 2. O filtro descarta o que não parece um dado real. O alerta mantém o dado e sinaliza que ele merece atenção, como uma leitura acima de 120 BPM.
+Também descartamos as leituras inválidas do DHT22. Quando o sensor falha, ele devolve `NaN`, e essa leitura não é gravada nem enviada.
 
-## 5. Lógica de resiliência
+Esse filtro é diferente do alerta da Parte 2. O filtro joga fora o que não parece um dado real. O alerta mantém o dado e avisa que ele merece atenção, por exemplo, acima de 120 BPM.
 
-### 5.1 Limite de armazenamento
+## 5. Resiliência offline
 
-O SPIFFS é opcional e não persiste no simulador. Por isso, as leituras ficam em um buffer na RAM, com o Monitor Serial como alternativa de registro, como prevê o enunciado. Cada leitura ocupa 16 bytes. A 1 leitura a cada 5 s, são 720 leituras por hora, ou 11,25 KB.
+### 5.1 Quanto guardar
 
-A primeira proposta foi guardar 12 horas (8.640 leituras, 135 KB). Medimos a memória no Wokwi e encontramos 323 KB livres, mas o maior bloco contínuo tinha 107 KB. Como o vetor precisa de memória contínua e a Parte 2 ainda vai usar RAM para Wi-Fi e MQTT, adotamos uma meta de até cerca de 70 KB. Havia duas formas de atingi-la:
+O SPIFFS é opcional e não funciona no simulador, então guardamos as leituras em um vetor na memória RAM, como alternativa prevista no enunciado. Cada leitura tem quatro campos (momento, temperatura, umidade e BPM) e ocupa 16 bytes. Com uma leitura a cada 5 segundos, são 720 leituras por hora, ou 11,25 KB.
 
-| Opção | Autonomia | Intervalo | Leituras | Pico de 8 s |
+Nossa primeira ideia foi guardar 12 horas, o que daria 8.640 leituras e 135 KB. Antes de programar, medimos a memória no Wokwi: havia 323 KB livres, mas o maior bloco contínuo tinha só 107 KB, e um vetor precisa de memória contínua. Além disso, a Parte 2 ainda ia precisar de RAM para o Wi-Fi e o MQTT. Decidimos então trabalhar com uma meta de uns 70 KB e comparamos duas opções:
+
+| Opção | Autonomia | Intervalo | Leituras | Um pico de 8 s aparece? |
 |---|---|---|---|---|
-| A (escolhida) | 6 horas | 5 s | 4.320 | Sempre registrado |
-| B | 12 horas | ~10 s | 4.480 | Pode cair entre duas leituras |
+| A (escolhida) | 6 horas | 5 s | 4.320 | Sempre |
+| B | 12 horas | cerca de 10 s | 4.480 | Às vezes |
 
-Escolhemos manter uma leitura a cada 5 segundos, com um buffer de 4.320 leituras (cerca de 6 horas e 67,5 KB), porque o paciente pode ficar sem conexão durante um deslocamento longo ou uma queda temporária da internet, e nesse período o sistema precisa continuar registrando os sinais simulados com detalhe suficiente para que um pico curto, de 8 segundos, não caia entre duas leituras. Com o buffer em uso, a RAM livre medida foi de 256 KB.
+Ficamos com a opção A, com 4.320 leituras (cerca de 6 horas e 67,5 KB). Preferimos perder horas de autonomia a perder detalhe: com leituras a cada 10 segundos, um pico curto poderia cair entre duas leituras e não ser registrado. Seis horas cobrem situações como um deslocamento longo ou uma queda da internet de casa. Depois de implementar, a RAM livre medida caiu para 256 KB, o que bateu com a conta.
 
-### 5.2 Buffer circular
+### 5.2 Quando a memória enche
 
-Sem conexão, a coleta continua normalmente. Quando o buffer enche, cada leitura nova substitui a mais antiga, preservando as 6 horas mais recentes. Quando a conexão volta, esse é o trecho mais útil para acompanhar o estado atual.
+Escolhemos um buffer circular: quando as 4.320 posições estão ocupadas, a leitura nova entra no lugar da mais antiga. Assim, ficam sempre as últimas 6 horas, que são as mais úteis quando a conexão volta.
 
-### 5.3 Sincronização
+Chegamos a pensar em proteger as leituras fora da faixa normal, substituindo só as normais. Deixamos essa ideia para o futuro, porque complicaria bastante o código e a ordem de envio.
 
-Ao reconectar, o sistema envia uma leitura por volta do `loop()`, da mais antiga para a mais nova, simulando a nuvem com `Serial.println`. Depois de cada envio, a posição é liberada, o que faz o papel de apagar o arquivo local citado no enunciado.
+### 5.3 Quando a conexão volta
 
-Enviar uma leitura por vez mantém o botão e o DHT22 ativos durante a sincronização, e uma queda no meio do envio preserva o que falta. Cada leitura carrega seu `momento`, então os dados enviados com atraso voltam ao lugar certo na linha do tempo.
+A chave deslizante simula o Wi-Fi. Ela também trepidava: no primeiro teste, cada deslize gerava vários ONLINE e OFFLINE seguidos. Corrigimos aceitando a mudança só depois de a chave ficar estável por 50 ms.
 
-## 6. Testes no Wokwi
+Ao reconectar, o programa envia uma leitura por volta do `loop()`, da mais antiga para a mais nova, usando `Serial.println` para simular a nuvem. Depois de cada envio, a posição é liberada, o que corresponde a apagar o arquivo local, como pede o enunciado. Enviando uma por vez, o botão e o DHT22 continuam funcionando durante a sincronização, e, se a conexão cair no meio, o que falta continua guardado. Como cada leitura leva o seu `momento`, os dados que chegam atrasados podem ser colocados de volta na ordem certa.
+
+## 6. Testes
 
 | Teste | Resultado |
 |---|---|
-| Toques muito rápidos | Ignorados como artefato; o maior BPM aceito nesse teste foi 219 |
-| Primeiro toque depois de pausa maior que 5 s | BPM reinicia em 0, sem valor falso |
-| Deslizar a chave | Uma mensagem por mudança de estado |
-| 5 leituras offline, depois online | Enviadas em ordem, de 5000 a 25000 ms |
-| Capacidade temporária de 3, com 5 leituras offline | Enviadas apenas as 3 mais recentes: 15000, 20000 e 25000 ms |
+| Cliques muito rápidos | Ignorados como artefato; o maior BPM aceito foi 219 |
+| Primeiro toque depois de uma pausa | O BPM recomeça em 0, sem valor falso |
+| Deslizar a chave | Uma mensagem por mudança |
+| 5 leituras offline e depois online | Enviadas em ordem, de 5000 a 25000 ms |
+| Capacidade reduzida para 3, com 5 leituras offline | Enviadas só as 3 mais recentes (15000, 20000 e 25000 ms) |
 | Memória com o buffer em uso | 256 KB livres, de 323 KB |
 
-## 7. Limitações e melhorias futuras
+Para testar o buffer cheio sem esperar 6 horas, reduzimos a capacidade para 3 temporariamente e depois voltamos para 4.320. Na revisão final do código, encontramos um problema que os testes não tinham mostrado: o primeiro toque depois de uma pausa longa usava a batida de antes dela e calculava um BPM muito baixo. Com 30 segundos de pausa, por exemplo, daria 2 BPM. Corrigimos fazendo a contagem recomeçar depois de 5 segundos sem toque e testamos de novo.
 
-- **Memória volátil:** o buffer fica na RAM e se perde se o ESP32 reiniciar. Um dispositivo real precisaria de armazenamento persistente, como SPIFFS ou cartão microSD.
-- **Tempo relativo:** `momento` conta os milissegundos desde que o ESP32 ligou, não a hora do relógio.
-- **Eventos curtos:** variações menores que 5 s podem não ser guardadas, porque o buffer registra o BPM apenas no momento de cada leitura.
-- **Testes pendentes:** a capacidade de 4.320 leituras só foi testada em escala reduzida. A falha do DHT22 e a queda da conexão no meio de uma sincronização não foram exercitadas.
-- **Folga de memória:** a meta de 70 KB é uma estimativa, a ser confirmada com Wi-Fi e MQTT na Parte 2.
-- **Retenção por prioridade:** o buffer poderia preservar as leituras fora da faixa normal antes de substituir as demais. Essa ideia foi deixada para o futuro porque aumenta a complexidade e dificulta manter a ordem de envio.
+## 7. Limitações
+
+O buffer fica na RAM, então se o ESP32 reiniciar os dados se perdem. Um dispositivo real precisaria de armazenamento permanente, como o SPIFFS ou um cartão microSD. O campo `momento` também não é a hora do relógio, e sim o tempo desde que o ESP32 ligou.
+
+Como gravamos uma leitura a cada 5 segundos, variações muito curtas no BPM podem não ficar registradas. Também não conseguimos testar tudo: a capacidade de 4.320 leituras foi testada só em escala reduzida, e não simulamos falha do DHT22 nem queda da conexão no meio de uma sincronização. Por fim, a meta de 70 KB para o buffer partiu de uma estimativa do espaço que o Wi-Fi e o MQTT iam precisar; na Parte 2, com o TLS conectado, ainda sobraram 113 KB livres.
 
 ## 8. Referências
 

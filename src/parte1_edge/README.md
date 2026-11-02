@@ -1,6 +1,6 @@
 # Parte 1 — Armazenamento e processamento local (Edge Computing)
 
-Simulação no Wokwi de um ESP32 que lê sinais vitais simulados, guarda as leituras em um buffer circular na memória e as sincroniza quando a conexão volta. Os dados são simulados, e o protótipo não foi validado para uso clínico.
+Nesta parte, o ESP32 no Wokwi lê os sinais vitais simulados, guarda as leituras em um buffer circular na memória e envia tudo quando a conexão volta. Os dados são simulados, e o protótipo não foi validado para uso clínico.
 
 - **Projeto no Wokwi:** [CardioIA - Fase 3](https://wokwi.com/projects/478992650362063873)
 - **Enunciado:** [Parte 1](../../document/Enunciado.md)
@@ -25,15 +25,15 @@ Simulação no Wokwi de um ESP32 que lê sinais vitais simulados, guarda as leit
 2. Clique no botão para simular os batimentos.
 3. Deslize a chave para alternar entre OFFLINE e ONLINE e acompanhe o Monitor Serial.
 
-## Lógica
+## Como funciona
 
-- **Leitura:** a cada 5 s, o sistema lê o DHT22 e usa o BPM calculado a partir dos toques no botão.
-- **Filtro de artefato:** intervalos menores que 273 ms, equivalentes a mais de 220 BPM, são ignorados. Esse limite vale para esta simulação e não é um critério clínico.
-- **Leituras inválidas:** leituras `NaN` do DHT22 não entram no buffer.
-- **Armazenamento:** o buffer circular guarda até 4.320 leituras (6 horas, 67,5 KB). Quando ele enche, a leitura nova substitui a mais antiga.
-- **Sincronização:** com a chave em ONLINE, sai uma leitura por volta do `loop()`, da mais antiga para a mais nova, e a posição é liberada em seguida. O envio é simulado com `Serial.println`.
+A cada 5 segundos, o programa lê o DHT22 e grava uma leitura com a temperatura, a umidade e o BPM calculado a partir dos toques no botão. Toques com intervalo menor que 273 ms (mais de 220 BPM) são ignorados como artefato, e leituras inválidas do sensor (`NaN`) não são gravadas. O limite de 220 BPM vale só para esta simulação, não é um critério clínico.
 
-## Testes realizados no Wokwi
+O buffer guarda até 4.320 leituras, cerca de 6 horas e 67,5 KB. Quando enche, a leitura nova entra no lugar da mais antiga. Com a chave em ONLINE, o programa envia uma leitura por volta do `loop()`, da mais antiga para a mais nova, e libera a posição em seguida. O envio para a nuvem é simulado com `Serial.println`.
+
+A explicação completa das escolhas está no [relatório da Parte 1](../../document/relatorio_parte1.md).
+
+## Testes que fizemos no Wokwi
 
 | Teste | Resultado |
 |---|---|

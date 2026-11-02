@@ -29,11 +29,11 @@
 
 ### 1.1.1 Contexto da Inteligência Artificial
 
-O CardioIA evolui a cada fase. A Fase 1 reuniu bases numéricas, textuais e visuais; a Fase 2 aplicou processamento de linguagem natural e classificação de risco a relatos sintéticos. A Fase 3 acrescenta o monitoramento contínuo de sinais vitais com IoT, integrando Edge, Fog e Cloud Computing.
+O CardioIA vem crescendo a cada fase. Na Fase 1, reunimos bases numéricas, textuais e visuais de cardiologia. Na Fase 2, usamos processamento de linguagem natural e classificação de risco em relatos sintéticos. Agora, na Fase 3, o foco é o monitoramento contínuo de sinais vitais com IoT, passando pelas camadas de Edge, Fog e Cloud.
 
 ### 1.1.2 Descrição da solução desenvolvida
 
-A solução simula um dispositivo vestível de monitoramento cardíaco em um ESP32 no Wokwi. O DHT22 mede temperatura e umidade, e um botão simula os batimentos. O dispositivo filtra artefatos, guarda as leituras em um buffer circular e continua coletando sem conexão. Quando a conexão volta, as leituras são publicadas em ordem no HiveMQ Cloud via MQTT com TLS. O Node-RED as recebe e exibe em um dashboard com gráfico, medidor e alerta automático.
+Simulamos no Wokwi um monitor cardíaco vestível feito com um ESP32. O DHT22 mede temperatura e umidade, e um botão faz o papel dos batimentos. O ESP32 filtra os toques que não parecem reais, guarda as leituras em um buffer circular e continua coletando mesmo sem internet. Quando a conexão volta, ele publica as leituras em ordem no HiveMQ Cloud, via MQTT com TLS, e o Node-RED mostra tudo em um dashboard com gráfico, medidor e alerta.
 
 # <a name="c2"></a>2. Visão geral do projeto
 
@@ -47,11 +47,11 @@ A solução simula um dispositivo vestível de monitoramento cardíaco em um ESP
 
 ## 2.2 Público-alvo
 
-A entrega destina-se à avaliação acadêmica da FIAP. Os dados são simulados, e o protótipo não foi validado para uso clínico.
+Este trabalho foi feito para a avaliação da FIAP. Os dados são simulados, e o protótipo não foi validado para uso clínico.
 
 ## 2.3 Metodologia
 
-O desenvolvimento seguiu etapas incrementais, partindo da leitura de um sensor até o fluxo completo. Cada etapa foi executada e testada no Wokwi antes da seguinte. Decisões de engenharia, como o tamanho do buffer, foram baseadas em cálculos e em medições de memória, e o enunciado e as apostilas orientaram as escolhas.
+Fomos construindo o projeto aos poucos: começamos com um "Hello" no Monitor Serial, depois a leitura do DHT22, o botão, o buffer, o Wi-Fi simulado e, por fim, o MQTT e o dashboard. Cada etapa foi testada no Wokwi antes de passarmos para a próxima. Nas decisões mais importantes, como o tamanho do buffer, fizemos as contas e medimos a memória antes de escolher, sempre olhando o enunciado e as apostilas.
 
 # <a name="c3"></a>3. Desenvolvimento do projeto
 
@@ -72,25 +72,27 @@ ESP32 no Wokwi  →  HiveMQ Cloud  →  Node-RED  →  Dashboard
 Borda (Edge)       Nuvem (broker)   Névoa (Fog)   Visualização
 ```
 
-Na borda, o ESP32 captura os sinais, descarta toques acima de 220 BPM e leituras inválidas e guarda até 4.320 leituras, cerca de 6 horas e 67,5 KB. As leituras saem do buffer da mais antiga para a mais nova. O Node-RED assina o tópico `cardioia/ai4success/leituras`, avalia os limites e atualiza o dashboard. Os detalhes estão nos relatórios das [Parte 1](relatorio_parte1.md) e [Parte 2](relatorio_parte2.md).
+Na borda, o ESP32 descarta os toques acima de 220 BPM e as leituras inválidas do sensor e guarda até 4.320 leituras, o que dá cerca de 6 horas e 67,5 KB. As leituras saem do buffer da mais antiga para a mais nova. Do outro lado, o Node-RED assina o tópico `cardioia/ai4success/leituras`, confere os limites e atualiza o dashboard. Explicamos tudo com mais detalhe nos relatórios da [Parte 1](relatorio_parte1.md) e da [Parte 2](relatorio_parte2.md).
 
 ## 3.3 Testes e simulação
 
-Os testes foram feitos no Wokwi e cobriram o filtro de artefatos, a coleta offline, a sincronização em ordem, o buffer cheio em escala reduzida, a publicação MQTT, o dashboard e os alertas de temperatura e de BPM. As tabelas com os resultados e as limitações estão nos dois relatórios. A falha do DHT22, a queda real da conexão e a capacidade de 4.320 leituras em escala completa não foram exercitadas.
+Testamos no Wokwi o filtro de artefatos, a coleta sem conexão, o envio em ordem, o buffer cheio (com a capacidade reduzida para 3), a publicação MQTT, o dashboard e os alertas de temperatura e de BPM. A função que decide o alerta também foi testada separadamente, com 7 casos. Os resultados estão em tabelas nos dois relatórios. Ficaram de fora a falha do DHT22, uma queda real de conexão e o buffer cheio com as 4.320 leituras.
 
 # <a name="c4"></a>4. Resultados e avaliações
 
 ## 4.1 Análise dos resultados
 
-O fluxo completo funcionou: as leituras saíram do ESP32 simulado e chegaram ao dashboard, e os alertas dispararam acima de 120 BPM e de 38 °C. Esses limites vêm dos exemplos do enunciado e não são critérios clínicos. Depois de uma queda simulada, as leituras guardadas foram publicadas em ordem. A RAM livre medida ficou em 323 KB sem o buffer, 256 KB com o buffer e 113 KB com o TLS conectado. O maior bloco contínuo de 107 KB levou a reduzir a autonomia planejada de 12 para 6 horas, mantendo uma leitura a cada 5 s.
+O fluxo completo funcionou: as leituras saíram do ESP32 e chegaram ao dashboard, e o alerta acendeu acima de 120 BPM e de 38 °C, limites que tiramos dos exemplos do enunciado e que não são critérios clínicos. Depois de uma queda simulada, as leituras guardadas foram publicadas na ordem certa. Medindo a memória, encontramos 323 KB livres sem o buffer, 256 KB com o buffer e 113 KB com o TLS conectado. Como o maior bloco contínuo tinha só 107 KB, reduzimos a autonomia planejada de 12 para 6 horas, mantendo uma leitura a cada 5 s.
 
 ## 4.2 Feedback dos usuários
 
-Não houve teste com usuários. O protótipo usa dados simulados e foi avaliado apenas pelos testes técnicos descritos neste documento.
+Não fizemos testes com usuários. Como os dados são simulados, avaliamos o protótipo só pelos testes técnicos descritos aqui.
 
 # <a name="c5"></a>5. Conclusões e trabalhos futuros
 
-O protótipo demonstra o ciclo de captura, processamento, transmissão, visualização e alerta, com a borda garantindo a continuidade da coleta quando a conexão falha. Entre os trabalhos futuros estão guardar as leituras em memória persistente, usar a hora real em cada leitura, verificar o certificado do broker, adotar QoS 1, preservar por prioridade as leituras fora da faixa normal e armazenar o histórico com InfluxDB e Grafana. O uso com dados reais exigiria validação clínica e adequação à LGPD.
+Conseguimos montar o ciclo inteiro: captura, processamento, transmissão, visualização e alerta. O que mais aprendemos foi a importância da borda, que mantém a coleta funcionando quando a conexão cai, e como a memória limitada do ESP32 obriga a fazer escolhas.
+
+Se fôssemos continuar, guardaríamos as leituras em memória permanente, usaríamos a hora real em cada leitura, verificaríamos o certificado do broker, passaríamos para QoS 1, protegeríamos as leituras fora da faixa normal e guardaríamos o histórico com InfluxDB e Grafana. Para usar com dados reais, ainda seria preciso validação clínica e adequação à LGPD.
 
 # <a name="c6"></a>6. Referências
 

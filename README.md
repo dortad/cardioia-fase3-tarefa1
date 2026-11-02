@@ -31,13 +31,13 @@
 
 ## 📜 Descrição
 
-Nesta fase, o CardioIA simula um sistema vestível de monitoramento cardíaco contínuo. Um ESP32 no Wokwi captura sinais vitais simulados, armazena e processa as leituras localmente, transmite os dados para a nuvem via MQTT e os exibe em um dashboard com alertas automáticos. O fluxo completo é: captura → processamento → transmissão → visualização → alerta.
+Nesta fase, simulamos um monitor cardíaco vestível. Um ESP32 no Wokwi lê sinais vitais simulados, guarda e trata as leituras no próprio dispositivo, envia os dados para a nuvem via MQTT e mostra tudo em um dashboard com alertas. O caminho completo é: captura → processamento → transmissão → visualização → alerta.
 
-A Fase 3 dá continuidade às entregas anteriores. A [Fase 1](document/other/fase1/README.md) reuniu bases numéricas, textuais e visuais de cardiologia; a [Fase 2](document/other/fase2/README.md) aplicou extração simbólica de sintomas e classificação de risco a relatos sintéticos. Agora o projeto passa a tratar sinais vitais capturados de forma contínua.
+A Fase 3 continua o trabalho das fases anteriores. Na [Fase 1](document/other/fase1/README.md), reunimos bases numéricas, textuais e visuais de cardiologia, e na [Fase 2](document/other/fase2/README.md) fizemos a extração de sintomas e a classificação de risco de relatos sintéticos. Agora o projeto passa a trabalhar com sinais vitais coletados de forma contínua.
 
 Os dados são simulados e o protótipo não foi validado para uso clínico.
 
-**Estado atual:** a [Parte 1 — Edge Computing](src/parte1_edge/README.md) e a [Parte 2 — Fog/Cloud Computing](src/parte2_cloud/README.md) foram concluídas. Os itens opcionais “Ir Além” não fazem parte desta entrega.
+As duas partes estão prontas: a [Parte 1 — Edge Computing](src/parte1_edge/README.md) e a [Parte 2 — Fog/Cloud Computing](src/parte2_cloud/README.md). Não fizemos os itens opcionais do "Ir Além".
 
 ## 🔗 Links rápidos
 

@@ -1,8 +1,8 @@
 # Parte 2 — Transmissão para nuvem e visualização (Fog/Cloud Computing)
 
-O ESP32 simulado no Wokwi publica as leituras no HiveMQ Cloud via MQTT com TLS, e o Node-RED as exibe em um dashboard com gráfico, medidor e alerta. Os dados são simulados, e o protótipo não foi validado para uso clínico.
+Nesta parte, o ESP32 no Wokwi publica as leituras no HiveMQ Cloud via MQTT com TLS, e o Node-RED mostra os dados em um dashboard com gráfico, medidor e alerta. Os dados são simulados, e o protótipo não foi validado para uso clínico.
 
-- **Projeto no Wokwi:** [CardioIA - Fase 3 - Parte 2](https://wokwi.com/projects/479534021698400257). O usuário e a senha do broker foram removidos desse projeto; sem eles, a coleta e o buffer funcionam, mas o MQTT não conecta.
+- **Projeto no Wokwi:** [CardioIA - Fase 3 - Parte 2](https://wokwi.com/projects/479534021698400257). Tiramos o usuário e a senha do broker desse projeto. Sem eles, a coleta e o buffer funcionam, mas o MQTT não conecta.
 - **Relatório:** [relatorio_parte2.md](../../document/relatorio_parte2.md)
 - **Prints do dashboard:** [document/prints_parte2/](../../document/prints_parte2/)
 - **Enunciado:** [Parte 2](../../document/Enunciado.md)
@@ -32,4 +32,4 @@ O ESP32 simulado no Wokwi publica as leituras no HiveMQ Cloud via MQTT com TLS, 
 
 ## Alertas
 
-O indicador fica vermelho acima de 120 BPM ou de 38 °C. Esses limites vêm dos exemplos do enunciado, valem para esta simulação e não são critérios clínicos.
+O indicador fica vermelho acima de 120 BPM ou de 38 °C. Tiramos esses valores dos exemplos do enunciado. Eles valem só para esta simulação e não são critérios clínicos.
